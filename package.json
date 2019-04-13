@@ -1,5 +1,5 @@
 {
-  "name": "stock-historry-webapp",
+  "name": "stock-history-webapp",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "v-chart-plugin": "^1.0.1",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"

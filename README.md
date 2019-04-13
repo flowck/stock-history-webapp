@@ -1,4 +1,4 @@
-# stock-historry-webapp
+# stock-history-webapp
 
 ## Project setup
 ```

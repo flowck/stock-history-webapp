@@ -1,18 +1,37 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <div class="home"></div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
-
 export default {
-  name: "home",
-  components: {
-    HelloWorld
+  name: "Home",
+  data() {
+    return {
+      dataset: [],
+      isRequesting: false,
+      hadError: ""
+    };
+  },
+  methods: {
+    /**
+     * GetStockHistories: This method will fire a GET request and then
+     * assign the response data into the state property: dataset
+     */
+    async GetStockHistories() {
+      this.isRequesting = true;
+      try {
+        const result = await this.axios.get("/stocks");
+        this.dataset = result.data;
+      } catch (e) {
+        this.hadError =
+          "There was an issue while fetching the information. Please reload the page.";
+      }
+      this.isRequesting = false;
+    }
+  },
+  created() {
+    // Fecth the initial data
+    this.GetStockHistories();
   }
 };
 </script>
