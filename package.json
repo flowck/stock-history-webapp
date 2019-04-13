@@ -9,9 +9,15 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "c3": "^0.7.0",
     "core-js": "^2.6.5",
+    "d3": "^5.9.2",
+    "moment": "^2.24.0",
     "v-chart-plugin": "^1.0.1",
     "vue": "^2.6.6",
+    "vue-axios": "^2.1.4",
+    "vue-c3": "^1.2.11",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
