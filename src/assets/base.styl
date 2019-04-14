@@ -1,0 +1,75 @@
+body
+  color #333
+  font-family "ubuntu", "sans-serif", "helvetica"
+
+/*
+* Titles
+*/
+.graph-container__title h1
+  font-weight 100
+
+/*
+* Aligning elements
+*/
+.is-flex
+  display flex
+
+/*
+* Spacing
+*/
+.space,
+.space__middle,
+.space__small
+  width 100%
+  height 40px
+
+.space__middle
+  height 20px
+
+.space__small
+  height 10px
+
+/*
+* Forms components
+*/
+FORM-COMP-HEIGHT = 35px
+BORDER-COLOR = solid rgba(0, 0, 0, .1)
+BORDER-COLOR-HOVER = rgba(0, 0, 0, .3)
+RADIUS = 3px
+
+.input
+  width 100%
+  border-radius RADIUS
+  height FORM-COMP-HEIGHT
+  background-color transparent
+  transition border-color .3s
+  border 1px BORDER-COLOR
+
+// On focus
+.input:focus
+  outline none
+  border-color BORDER-COLOR-HOVER
+
+// Label
+.label
+  font-size 12px
+  display block
+  margin-bottom 5px
+  text-transform uppercase
+
+// Buttons
+.button
+  border none
+  cursor pointer
+  border-radius RADIUS
+  height FORM-COMP-HEIGHT
+  border 1px BORDER-COLOR
+  background-color transparent
+
+// On hover
+.button:hover
+  border-color BORDER-COLOR-HOVER
+
+// On disabled
+.button:disabled
+  cursor not-allowed

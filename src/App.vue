@@ -6,6 +6,7 @@
 
 <script>
 import "../node_modules/c3/c3.css";
+import "./assets/base.styl";
 export default {
   name: "App"
 };

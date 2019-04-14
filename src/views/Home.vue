@@ -1,44 +1,66 @@
 <template>
   <div class="home">
-    <!-- Chart options -->
-    <div class="options">
-      <!-- Limit -->
-      <div class="option__block">
-        <label>Limit</label>
-        <select
-          v-model="options.limit"
-          @change="GetStocksWithParamQueries(options)"
-        >
-          <option :value="50">50</option>
-          <option :value="100">100</option>
-          <option :value="500">500</option>
-        </select>
+    <div class="graph-container">
+      <LoadingBar v-if="isRequesting" color="red" />
+
+      <div class="graph-container__title">
+        <h1>Cached Time-series Plot: AMEX, NYSE, NASDAQ stock histories</h1>
       </div>
-      <!-- Year -->
-      <div class="option__block">
-        <label>From</label>
-        <select
-          v-model="options.year"
-          @change="GetStocksWithParamQueries(options)"
-        >
-          <option v-for="year in yearsRange" :key="year" :value="year">{{
-            year
-          }}</option>
-        </select>
+
+      <!-- ### Chart options ### -->
+      <div class="options is-flex">
+        <!-- Limit -->
+        <div class="option__block">
+          <label class="label">Limit results</label>
+          <select
+            class="input"
+            v-model="options.limit"
+            @change="GetStocksWithParamQueries(options)"
+          >
+            <option :value="50">50</option>
+            <option :value="100">100</option>
+            <option :value="500">500</option>
+          </select>
+        </div>
+        <!-- Year -->
+        <div class="option__block">
+          <label class="label">From</label>
+          <select
+            class="input"
+            v-model="options.year"
+            @change="GetStocksWithParamQueries(options)"
+          >
+            <option v-for="year in yearsRange" :key="year" :value="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+        <!-- Reset button -->
+        <div class="option__block">
+          <label class="label">Default</label>
+          <button
+            class="button"
+            :disabled="resetButtonStatus"
+            @click="ResetResults"
+          >
+            Reset
+          </button>
+        </div>
       </div>
-      <!-- Reset button -->
-      <div class="option__block">
-        <button :disabled="resetButtonStatus" @click="ResetResults">
-          Reset
-        </button>
-      </div>
+      <!-- ### Chart options ### -->
+
+      <div class="space"></div>
+
+      <!-- ### Graph ### -->
+      <vue-c3 :handler="handler" />
+      <!-- ### Graph ### -->
     </div>
-    <vue-c3 :handler="handler" />
   </div>
 </template>
 
 <script>
 // Dependencies
+import LoadingBar from "@/components/LoadingBar";
 import moment from "moment";
 import Vue from "vue";
 import VueC3 from "vue-c3";
@@ -58,13 +80,23 @@ export default {
     };
   },
   components: {
-    VueC3
+    VueC3,
+    LoadingBar
   },
   computed: {
+    /**
+     * resetButtonStatus: This computed property will return a boolean
+     * true if the option values are default
+     * otherwise false.
+     */
     resetButtonStatus() {
       const { limit, year } = this.options;
       return limit === 50 && year === 2019 ? true : false;
     },
+    /**
+     * yearsRange: This computed property will return an array
+     * of all the years between 1970 and the current year.
+     */
     yearsRange() {
       const result = [];
       const currentYear = new Date().getFullYear();
@@ -80,6 +112,8 @@ export default {
     /**
      * GetStockHistories: This method will fire a GET request and then
      * assign the response data into the state property: dataset
+     *
+     * @param {object} options
      */
     async GetStockHistories(options) {
       try {
@@ -110,7 +144,13 @@ export default {
         }
 
         // Return the dataset
-        const result = [openColumn, dateColumn];
+        const result = [
+          openColumn,
+          highColumn,
+          lowColumn,
+          adjustedClosePriceColumn,
+          dateColumn
+        ];
         return Promise.resolve(result);
       } catch (err) {
         return Promise.reject(err);
@@ -124,6 +164,7 @@ export default {
      * @param {object} queryOptions
      */
     async GetStocksWithParamQueries(queryOptions) {
+      this.isRequesting = true;
       try {
         const result = await this.GetStockHistories(queryOptions);
         this.handler.$emit("dispatch", chart => {
@@ -134,6 +175,7 @@ export default {
       } catch (err) {
         console.log(err);
       }
+      this.isRequesting = false;
     },
     ResetResults() {
       this.options = {
@@ -144,6 +186,7 @@ export default {
       this.GetStocksWithParamQueries(this.options);
     },
     async InitChart() {
+      this.isRequesting = true;
       try {
         // Fecth the initial data
         const dataset = await this.GetStockHistories();
@@ -161,6 +204,10 @@ export default {
               }
             },
             y: {
+              label: {
+                text: "High",
+                position: "outer-middle"
+              },
               tick: {
                 format: format("$,")
               }
@@ -171,6 +218,7 @@ export default {
       } catch (err) {
         console.log(err);
       }
+      this.isRequesting = false;
     }
   },
   async mounted() {
@@ -178,3 +226,20 @@ export default {
   }
 };
 </script>
+
+<style lang="stylus" scoped>
+.graph-container
+  width 900px
+  min-height 445px
+  border-radius 3px
+  position relative
+  padding 20px 20px 10px 20px
+  border 1px solid rgba(0, 0, 0, .1)
+
+// Options
+.option__block
+  width 33%
+
+.option__block:not(:first-child)
+  margin-left 1%
+</style>
