@@ -55,12 +55,15 @@
       <vue-c3 :handler="handler" />
       <!-- ### Graph ### -->
     </div>
+
+    <AlertBar v-if="hadError" :closeMethod="CloseAlert" :message="hadError" />
   </div>
 </template>
 
 <script>
 // Dependencies
 import LoadingBar from "@/components/LoadingBar";
+import AlertBar from "@/components/AlertBar";
 import moment from "moment";
 import Vue from "vue";
 import VueC3 from "vue-c3";
@@ -81,7 +84,8 @@ export default {
   },
   components: {
     VueC3,
-    LoadingBar
+    LoadingBar,
+    AlertBar
   },
   computed: {
     /**
@@ -173,7 +177,8 @@ export default {
           });
         });
       } catch (err) {
-        console.log(err);
+        this.hadError =
+          "There was an error trying to update the chart. Try again please.";
       }
       this.isRequesting = false;
     },
@@ -216,9 +221,12 @@ export default {
         };
         this.handler.$emit("init", options);
       } catch (err) {
-        console.log(err);
+        this.hadError = "An error occurred trying to fetch the initial data.";
       }
       this.isRequesting = false;
+    },
+    CloseAlert() {
+      this.hadError = "";
     }
   },
   async mounted() {
